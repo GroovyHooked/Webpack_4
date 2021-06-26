@@ -1,39 +1,22 @@
 const path = require('path') // On importe le module de cehmin relatif
+const htmlWebpackPlugin = require('html-webpack-plugin')
+const cleanWebpackPlugin = require('clean-webpack-plugin')
 
 module.exports = {
     entry: './src/index.js', // Fichier traité
     output: {					// Génération du fichier de sortie par Webpack
-        filename: 'js/site.js',
+        filename: 'js/site-[contenthash].js',
         path: path.resolve(__dirname, 'dist') // On se sert du module pour le chemin
         // relatif du fichier de sortie
     },
     module: {
         rules: [
             {
-                test: /\.(sa|sc|c)ss$/,
-                use: [
-                    "style-loader",
-                    "css-loader",
-                    {
-                        loader: "postcss-loader",
-                        options: {
-                            postcssOptions: {
-                                ident: 'postcss',
-                                plugins: [
-                                    require('autoprefixer')(),
-                                ]
-                            }
-                        }
-                    },
-                    "sass-loader",
-                ]
-            },
-            {
                 test: /\.(png|jpeg|jpg|gif)$/i,
                 loader: 'url-loader',
                 options: {
                     limit: 102400,
-                    name: '[name].[ext]',
+                    name: '[name]-[contenthash].[ext]',
                     outputPath: 'images'
                 }
             },
@@ -41,7 +24,7 @@ module.exports = {
                 test: /\.(woff|woff2|eot|ttf|otf|svg)$/i,
                 loader: 'file-loader',
                 options: {
-                    name: '[name].[ext]',
+                    name: '[name]-[contenthash].[ext]',
                     outputPath: 'fonts'
                 }
             },
@@ -59,6 +42,12 @@ module.exports = {
             },
         ], // end rules array
     }, // end module object
+    plugins: [
+        new cleanWebpackPlugin(),
+        new htmlWebpackPlugin({
+            template: "src/templates/index.html"
+        })
+    ],
     devtool: 'none',
 } // end of module.exports object
 // Attention à changer la src du script dans le fichier html src="js/site.js"
